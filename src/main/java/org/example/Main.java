@@ -15,25 +15,29 @@ public class Main {
     public static void main(String[] args) {
 
         Stmt[] stmt = new Stmt[]{
-                //  if (a == 1) {
-                new IfStmt(
-                        new IntCmp(new Var("a"), new Int(1), "=="),
-                        // return 1;
-                        new Stmt[]{
-                                new ReturnStmt(new Int(1))
-                        },
-                        // } else {
-                        new Stmt[]{
-                                // return a * factorial(a - 1);
-                                new ReturnStmt(
-                                        new IntOp(
-                                                new Var("a"),
-                                                new FnCall("factorial", new Expr[]{new IntOp(new Var("a"), new Int(1), "-")}),
-                                                "*"
-                                        )
-                                )
-                        }
-                ),
+            //  if (a == 1) {
+            new IfStmt(
+                new IntCmp(new Var("a"), new Int(1), "=="),
+                // return 1;
+                new Stmt[]{
+                    new ReturnStmt(new Int(1))
+                },
+                // } else {
+                new Stmt[]{
+                    // return a * factorial(a - 1);
+                    new ReturnStmt(
+                        new IntOp(
+                            new Var("a"),
+                            new FnCall("factorial",
+                                new Expr[]{
+                                    new IntOp(new Var("a"), new Int(1), "-")
+                                }),
+                            "*"
+                        )
+                    )
+                }
+                // }
+            ),
         };
         Func func = new Func("factorial", new Var[]{new Var("a")}, stmt);
 
@@ -44,7 +48,7 @@ public class Main {
             fos.write(bytes);
             fos.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error: " + e);
         }
 
     }
@@ -195,10 +199,10 @@ public class Main {
             genExpr(((IntOp) expr).getLeft(), methodVisitor, args);
             genExpr(((IntOp) expr).getRight(), methodVisitor, args);
             switch (((IntOp) expr).getOp()) {
-                case "+": methodVisitor.visitInsn(IADD); break;
-                case "-": methodVisitor.visitInsn(ISUB); break;
-                case "*": methodVisitor.visitInsn(IMUL); break;
-                case "/": methodVisitor.visitInsn(IDIV); break;
+                case "+" -> methodVisitor.visitInsn(IADD);
+                case "-" -> methodVisitor.visitInsn(ISUB);
+                case "*" -> methodVisitor.visitInsn(IMUL);
+                case "/" -> methodVisitor.visitInsn(IDIV);
             }
         } else if (expr instanceof Int) {
             methodVisitor.visitIntInsn(BIPUSH, ((Int) expr).getValue());
@@ -210,9 +214,8 @@ public class Main {
             Label label1 = new Label();
             Label label2 = new Label();
             switch (((IntCmp) expr).getOp()) {
-                case "==":
-                    methodVisitor.visitJumpInsn(IF_ICMPEQ, label1);
-                    break;
+                case "==" -> methodVisitor.visitJumpInsn(IF_ICMPEQ, label1);
+                case "!=" -> methodVisitor.visitJumpInsn(IF_ICMPNE, label1);
             }
             methodVisitor.visitInsn(ICONST_0);
             methodVisitor.visitJumpInsn(GOTO, label2);
