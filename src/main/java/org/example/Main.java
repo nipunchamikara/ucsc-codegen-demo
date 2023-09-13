@@ -15,16 +15,16 @@ public class Main {
     public static void main(String[] args) {
 
         Stmt[] stmt = new Stmt[]{
-            //  if (a == 1) {
+            //  if (n == 0) {
             new IfStmt(
-                new IntCmp(new Var("a"), new Int(1), "=="),
+                new IntCmp(new Var("a"), new Int(0), "=="),
                 // return 1;
                 new Stmt[]{
                     new ReturnStmt(new Int(1))
                 },
                 // } else {
                 new Stmt[]{
-                    // return a * factorial(a - 1);
+                    // return n * factorial(n - 1);
                     new ReturnStmt(
                         new IntOp(
                             new Var("a"),
